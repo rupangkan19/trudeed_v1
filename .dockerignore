@@ -1,0 +1,15 @@
+backend/venv/
+backend/__pycache__/
+backend/*.db
+backend/*.log
+backend/demo_docs/*.pdf
+frontend/node_modules/
+.git/
+.gitignore
+README.md
+SETUP.md
+DESIGN.md
+start.bat
+start.sh
+update.bat
+update.sh

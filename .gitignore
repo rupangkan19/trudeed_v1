@@ -1,0 +1,22 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/rules/__pycache__/
+backend/forensics/__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Database (each deployment has its own)
+backend/*.db
+
+# Node
+frontend/node_modules/
+frontend/.vite/
+
+# macOS
+.DS_Store
+
+# Environment
+.env
+*.env
