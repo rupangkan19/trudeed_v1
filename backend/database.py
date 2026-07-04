@@ -78,6 +78,7 @@ def init_db() -> None:
                 fields_json  TEXT,
                 flags_json   TEXT,
                 heatmap_b64  TEXT,
+                officer_name TEXT,
                 created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 
@@ -103,6 +104,10 @@ def init_db() -> None:
                 created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
+        try:
+            c.execute("ALTER TABLE submissions ADD COLUMN officer_name TEXT")
+        except Exception:
+            pass
 
 
 def insert_submission(
@@ -116,15 +121,16 @@ def insert_submission(
     fields_json: str,
     flags_json: str,
     heatmap_b64: Optional[str],
+    officer_name: str = "unknown",
 ) -> None:
     with _conn() as c:
         c.execute(
             """INSERT INTO submissions
                (applicant_id, doc_type, phash, content_hash, verdict, score,
-                intake_mode, fields_json, flags_json, heatmap_b64)
-               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                intake_mode, fields_json, flags_json, heatmap_b64, officer_name)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
             (applicant_id, doc_type, phash, content_hash, verdict, score,
-             intake_mode, fields_json, flags_json, heatmap_b64),
+             intake_mode, fields_json, flags_json, heatmap_b64, officer_name),
         )
 
 
@@ -142,12 +148,19 @@ def store_applicant_fields(
                 )
 
 
-def get_submissions() -> list[dict]:
+def get_submissions(officer_name: Optional[str] = None) -> list[dict]:
     with _conn() as c:
-        rows = c.execute(
-            "SELECT id, applicant_id, doc_type, verdict, score, intake_mode, created_at "
-            "FROM submissions ORDER BY created_at DESC"
-        ).fetchall()
+        if officer_name:
+            rows = c.execute(
+                "SELECT id, applicant_id, doc_type, verdict, score, intake_mode, created_at, officer_name "
+                "FROM submissions WHERE officer_name=? ORDER BY created_at DESC",
+                (officer_name,)
+            ).fetchall()
+        else:
+            rows = c.execute(
+                "SELECT id, applicant_id, doc_type, verdict, score, intake_mode, created_at, officer_name "
+                "FROM submissions ORDER BY created_at DESC"
+            ).fetchall()
     return [dict(r) for r in rows]
 
 

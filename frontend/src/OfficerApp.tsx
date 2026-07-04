@@ -99,12 +99,12 @@ export default function OfficerApp({ onExit, userName }: Props) {
 
     // Verify document
     if (activePage === 'verify') {
-      return <VerifyPage onResult={handleResult} lastResult={null} />
+      return <VerifyPage onResult={handleResult} lastResult={null} userName={userName} />
     }
 
     // Last result
     if (activePage === 'last-result') {
-      return <VerifyPage onResult={handleResult} lastResult={lastResult} />
+      return <VerifyPage onResult={handleResult} lastResult={lastResult} userName={userName} />
     }
 
     // Submissions
@@ -115,7 +115,7 @@ export default function OfficerApp({ onExit, userName }: Props) {
       activePage === 'submissions-all'
     ) {
       const filter = getSubmissionsFilter(activePage)
-      return <MySubmissions filter={filter} />
+      return <MySubmissions filter={filter} userName={userName} />
     }
 
     // Applicant lookup
@@ -125,7 +125,7 @@ export default function OfficerApp({ onExit, userName }: Props) {
 
     // Case tracker (reuses submissions for now)
     if (activePage.startsWith('case-tracker')) {
-      return <MySubmissions filter="all" />
+      return <MySubmissions filter="all" userName={userName} />
     }
 
     // Quick tools
@@ -146,7 +146,7 @@ export default function OfficerApp({ onExit, userName }: Props) {
 
     // Stats / performance
     if (activePage === 'stats' || activePage === 'performance') {
-      return <OfficerStats />
+      return <OfficerStats userName={userName} />
     }
 
     // Profile

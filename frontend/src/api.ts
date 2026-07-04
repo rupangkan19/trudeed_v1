@@ -6,11 +6,15 @@ export async function verifyDocument(
   file: File,
   applicantId: string,
   docType: string,
+  officerName?: string,
 ): Promise<VerifyResponse> {
   const form = new FormData()
   form.append('file', file)
   form.append('applicant_id', applicantId.trim())
   form.append('doc_type', docType)
+  if (officerName) {
+    form.append('officer_name', officerName)
+  }
 
   const res = await fetch(`${BASE}/verify`, { method: 'POST', body: form })
   if (!res.ok) {
@@ -20,8 +24,9 @@ export async function verifyDocument(
   return res.json()
 }
 
-export async function getHistory(): Promise<Submission[]> {
-  const res = await fetch(`${BASE}/history`)
+export async function getHistory(officerName?: string): Promise<Submission[]> {
+  const url = officerName ? `${BASE}/history?officer_name=${encodeURIComponent(officerName)}` : `${BASE}/history`
+  const res = await fetch(url)
   if (!res.ok) throw new Error('Failed to load history')
   return res.json()
 }

@@ -15,21 +15,40 @@ export default function App() {
   const [nameInput, setNameInput] = useState('')
   const [selectedRole, setSelectedRole] = useState<'admin' | 'officer' | null>(null)
   const [nameError, setNameError] = useState(false)
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const handleEnter = (role: 'admin' | 'officer') => {
-    if (!nameInput.trim()) {
+    const input = nameInput.trim()
+    if (!input) {
       setNameError(true)
+      setValidationError(null)
       return
     }
     setNameError(false)
-    setUserName(nameInput.trim())
+
+    if (role === 'admin') {
+      if (!input.toLowerCase().includes('admin')) {
+        setValidationError("Access Denied: Admin username must contain 'admin'")
+        return
+      }
+    } else if (role === 'officer') {
+      if (input.toLowerCase().includes('admin')) {
+        setValidationError("Access Denied: Officer username must not contain 'admin'")
+        return
+      }
+    }
+
+    setValidationError(null)
+    setUserName(input)
     setPortal(role)
   }
 
   const handleCardClick = (role: 'admin' | 'officer') => {
     setSelectedRole(role)
-    if (!nameInput.trim()) {
+    const input = nameInput.trim()
+    if (!input) {
       setNameError(true)
+      setValidationError(null)
       return
     }
     handleEnter(role)
@@ -204,6 +223,18 @@ export default function App() {
               }}
             >
               Please enter your name before selecting a portal
+            </p>
+          )}
+          {validationError && (
+            <p
+              style={{
+                color: '#f87171',
+                fontSize: 12,
+                textAlign: 'center',
+                marginTop: 6,
+              }}
+            >
+              {validationError}
             </p>
           )}
         </div>

@@ -114,11 +114,11 @@ export default function OfficerDashboard({ userName, onNavigate }: Props) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    getHistory()
+    getHistory(userName)
       .then(setHistory)
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false))
-  }, [])
+  }, [userName])
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'

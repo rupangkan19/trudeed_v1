@@ -11,6 +11,7 @@ import { useTheme } from '../../ThemeContext'
 interface Props {
   onResult: (r: VerifyResponse) => void
   lastResult: VerifyResponse | null
+  userName: string
 }
 
 function FlagRow({ flag }: { flag: Flag }) {
@@ -335,7 +336,7 @@ function ResultPanel({ result }: { result: VerifyResponse }) {
   )
 }
 
-export default function VerifyPage({ onResult, lastResult }: Props) {
+export default function VerifyPage({ onResult, lastResult, userName }: Props) {
   const { theme } = useTheme()
   const FONT = theme.FONT
   const TEXT_PRIMARY = theme.TEXT_PRIMARY
@@ -387,7 +388,7 @@ export default function VerifyPage({ onResult, lastResult }: Props) {
     setLoading(true)
     setError(null)
     try {
-      const result = await verifyDocument(file, applicantId, docType)
+      const result = await verifyDocument(file, applicantId, docType, userName)
       setCurrentResult(result)
       onResult(result)
     } catch (e: unknown) {

@@ -44,6 +44,7 @@ async def verify(
     file: UploadFile = File(...),
     applicant_id: str = Form(...),
     doc_type: str = Form(...),
+    officer_name: str = Form("unknown"),
 ) -> dict:
     if not applicant_id.strip():
         raise HTTPException(status_code=422, detail="applicant_id is required.")
@@ -84,6 +85,7 @@ async def verify(
         fields_json=json.dumps(result["fields"]),
         flags_json=json.dumps(score_result["all_flags"]),
         heatmap_b64=annotated_b64 or result.get("heatmap_b64"),
+        officer_name=officer_name,
     )
 
     return {
@@ -100,8 +102,8 @@ async def verify(
 
 
 @api.get("/history")
-def history() -> list[dict]:
-    return get_submissions()
+def history(officer_name: Optional[str] = None) -> list[dict]:
+    return get_submissions(officer_name)
 
 
 @api.get("/applicant/{applicant_id}")

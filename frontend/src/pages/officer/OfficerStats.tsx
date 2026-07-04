@@ -6,7 +6,7 @@ import { useTheme } from '../../ThemeContext'
 
 const DOC_COLORS = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2']
 
-export default function OfficerStats() {
+export default function OfficerStats({ userName }: { userName: string }) {
   const { theme } = useTheme()
   const FONT = theme.FONT
   const CARD: React.CSSProperties = {
@@ -22,8 +22,8 @@ export default function OfficerStats() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    getHistory().then(setSubs).catch(e => setError(e.message)).finally(() => setLoading(false))
-  }, [])
+    getHistory(userName).then(setSubs).catch(e => setError(e.message)).finally(() => setLoading(false))
+  }, [userName])
 
   if (loading) return <div style={{ display:'flex', justifyContent:'center', padding:48 }}><Loader2 size={32} color={theme.BLUE} style={{ animation:'spin 1s linear infinite' }} /><style>{`@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}`}</style></div>
   if (error) return <div style={{...CARD, color:theme.RED}}>Error: {error}</div>

@@ -6,6 +6,7 @@ import { useTheme } from '../../ThemeContext'
 
 interface Props {
   filter?: 'today' | 'week' | 'all'
+  userName?: string
 }
 
 const DOC_LABEL: Record<string, string> = {
@@ -111,7 +112,7 @@ const TABS: { key: TabFilter; label: string }[] = [
   { key: 'all', label: 'All History' },
 ]
 
-export default function MySubmissions({ filter: propFilter }: Props) {
+export default function MySubmissions({ filter: propFilter, userName }: Props) {
   const { theme } = useTheme()
   const FONT = theme.FONT
   const TEXT_PRIMARY = theme.TEXT_PRIMARY
@@ -134,7 +135,7 @@ export default function MySubmissions({ filter: propFilter }: Props) {
   const [activeTab, setActiveTab] = useState<TabFilter>(propFilter ?? 'all')
 
   useEffect(() => {
-    getHistory()
+    getHistory(userName)
       .then(data => {
         const sorted = [...data].sort(
           (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
@@ -143,7 +144,7 @@ export default function MySubmissions({ filter: propFilter }: Props) {
       })
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false))
-  }, [])
+  }, [userName])
 
   const filtered = history.filter(s => {
     if (activeTab === 'today') return isToday(s.created_at)
