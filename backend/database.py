@@ -153,7 +153,7 @@ def get_submissions(officer_name: Optional[str] = None) -> list[dict]:
         if officer_name:
             rows = c.execute(
                 "SELECT id, applicant_id, doc_type, verdict, score, intake_mode, created_at, officer_name "
-                "FROM submissions WHERE officer_name=? ORDER BY created_at DESC",
+                "FROM submissions WHERE LOWER(officer_name)=LOWER(?) ORDER BY created_at DESC",
                 (officer_name,)
             ).fetchall()
         else:
