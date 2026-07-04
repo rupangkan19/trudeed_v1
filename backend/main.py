@@ -47,6 +47,7 @@ async def verify(
     doc_type: str = Form(...),
     officer_name: str = Form("unknown"),
 ) -> dict:
+    print(f"DEBUG: /verify endpoint called with officer_name='{officer_name}'", flush=True)
     if not applicant_id.strip():
         raise HTTPException(status_code=422, detail="applicant_id is required.")
     doc_type = doc_type.upper()
@@ -104,6 +105,7 @@ async def verify(
 
 @api.get("/history")
 def history(officer_name: Optional[str] = None) -> list[dict]:
+    print(f"DEBUG: /history endpoint called with officer_name='{officer_name}'", flush=True)
     return get_submissions(officer_name)
 
 
