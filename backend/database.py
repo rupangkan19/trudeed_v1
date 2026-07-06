@@ -123,15 +123,31 @@ def insert_submission(
     heatmap_b64: Optional[str],
     officer_name: str = "unknown",
 ) -> None:
-    with _conn() as c:
-        c.execute(
-            """INSERT INTO submissions
-               (applicant_id, doc_type, phash, content_hash, verdict, score,
-                intake_mode, fields_json, flags_json, heatmap_b64, officer_name)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
-            (applicant_id, doc_type, phash, content_hash, verdict, score,
-             intake_mode, fields_json, flags_json, heatmap_b64, officer_name),
-        )
+    try:
+        with _conn() as c:
+            c.execute(
+                """INSERT INTO submissions
+                   (applicant_id, doc_type, phash, content_hash, verdict, score,
+                    intake_mode, fields_json, flags_json, heatmap_b64, officer_name)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+                (applicant_id, doc_type, phash, content_hash, verdict, score,
+                 intake_mode, fields_json, flags_json, heatmap_b64, officer_name),
+            )
+    except Exception as e:
+        print(f"WARNING: Database insertion failed: {e}. Retrying insert without officer_name column...", flush=True)
+        try:
+            with _conn() as c:
+                c.execute(
+                    """INSERT INTO submissions
+                       (applicant_id, doc_type, phash, content_hash, verdict, score,
+                        intake_mode, fields_json, flags_json, heatmap_b64)
+                       VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                    (applicant_id, doc_type, phash, content_hash, verdict, score,
+                     intake_mode, fields_json, flags_json, heatmap_b64),
+                )
+        except Exception as retry_err:
+            print(f"ERROR: Fallback database insertion failed: {retry_err}", flush=True)
+            raise retry_err
 
 
 def store_applicant_fields(
